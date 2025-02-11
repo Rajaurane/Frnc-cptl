@@ -1,79 +1,78 @@
-body {
-  font-family: Arial, sans-serif;
-  background-color: #f4f4f9;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  margin: 0;
+const questions = [
+  {
+    question: "What is the capital of France?",
+    options: ["Paris", "London", "Berlin", "Madrid"],
+    answer: "Paris"
+  },
+  {
+    question: "Which planet is known as the Red Planet?",
+    options: ["Earth", "Mars", "Jupiter", "Saturn"],
+    answer: "Mars"
+  },
+  {
+    question: "What is 2 + 2?",
+    options: ["3", "4", "5", "6"],
+    answer: "4"
+  }
+];
+
+let currentQuestionIndex = 0;
+let timer;
+let timeLeft = 10;
+
+function displayQuestion() {
+  const questionElement = document.getElementById("question");
+  const optionsElement = document.getElementById("options");
+  const currentQuestion = questions[currentQuestionIndex];
+
+  questionElement.textContent = currentQuestion.question;
+  optionsElement.innerHTML = "";
+
+  currentQuestion.options.forEach(option => {
+    const button = document.createElement("button");
+    button.textContent = option;
+    button.onclick = () => checkAnswer(option);
+    optionsElement.appendChild(button);
+  });
+
+  startTimer();
 }
 
-.quiz-container {
-  background-color: #ffffff;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  text-align: center;
-  width: 300px;
+function checkAnswer(selectedOption) {
+  clearInterval(timer);
+  const currentQuestion = questions[currentQuestionIndex];
+  const resultElement = document.getElementById("result");
+
+  if (selectedOption === currentQuestion.answer) {
+    resultElement.textContent = "Correct!";
+  } else {
+    resultElement.textContent = `Wrong! The correct answer is ${currentQuestion.answer}.`;
+  }
 }
 
-h1 {
-  color: #333;
+function nextQuestion() {
+  currentQuestionIndex++;
+  if (currentQuestionIndex < questions.length) {
+    displayQuestion();
+    document.getElementById("result").textContent = "";
+    timeLeft = 10;
+    document.getElementById("timer").textContent = timeLeft;
+  } else {
+    alert("Quiz Over!");
+  }
 }
 
-#timer {
-  font-size: 24px;
-  font-weight: bold;
-  color: #e74c3c;
-  margin: 10px 0;
+function startTimer() {
+  timer = setInterval(() => {
+    timeLeft--;
+    document.getElementById("timer").textContent = timeLeft;
+
+    if (timeLeft <= 0) {
+      clearInterval(timer);
+      checkAnswer("");
+    }
+  }, 1000);
 }
 
-#question {
-  font-size: 18px;
-  margin: 20px 0;
-  color: #2c3e50;
-}
-
-.options {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.options button {
-  padding: 10px;
-  font-size: 16px;
-  border: none;
-  border-radius: 5px;
-  background-color: #3498db;
-  color: white;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.options button:hover {
-  background-color: #2980b9;
-}
-
-#next-btn {
-  margin-top: 20px;
-  padding: 10px 20px;
-  font-size: 16px;
-  border: none;
-  border-radius: 5px;
-  background-color: #2ecc71;
-  color: white;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-#next-btn:hover {
-  background-color: #27ae60;
-}
-
-#result {
-  margin-top: 20px;
-  font-size: 18px;
-  font-weight: bold;
-  color: #e67e22;
-}
+// Initialize the first question
+displayQuestion();
